@@ -1,0 +1,138 @@
+#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+// Class to represent a customer
+class Customer {
+public:
+    string name;
+    int customerID;
+
+    Customer(string name, int id) : name(name), customerID(id) {}
+    
+    void displayCustomerInfo() {
+        cout << "Customer ID: " << customerID << "\nName: " << name << endl;
+    }
+};
+
+// Class to represent an account
+class Account {
+public:
+    int accountNumber;
+    double balance;
+    Customer* owner;
+
+    Account(int accNo, Customer* cust) : accountNumber(accNo), balance(0.0), owner(cust) {}
+
+    void deposit(double amount) {
+        balance += amount;
+        cout << "Deposited: $" << amount << endl;
+    }
+
+    void withdraw(double amount) {
+        if (amount > balance) {
+            cout << "Insufficient balance!" << endl;
+        } else {
+            balance -= amount;
+            cout << "Withdrawn: $" << amount << endl;
+        }
+    }
+
+    void displayAccountInfo() {
+        cout << "Account Number: " << accountNumber << "\nBalance: $" << balance << endl;
+        owner->displayCustomerInfo();
+    }
+};
+
+// Class to represent a transaction
+class Transaction {
+public:
+    string type;
+    double amount;
+
+    Transaction(string t, double a) : type(t), amount(a) {}
+
+    void displayTransaction() {
+        cout << "Transaction Type: " << type << ", Amount: $" << amount << endl;
+    }
+};
+
+// Class for banking services
+class BankingService {
+public:
+    vector<Customer> customers;
+    vector<Account> accounts;
+    vector<Transaction> transactions;
+
+    void addCustomer(string name, int id) {
+        customers.push_back(Customer(name, id));
+        cout << "Customer added successfully!\n";
+    }
+
+    void openAccount(int customerID, int accNo) {
+        for (auto& cust : customers) {
+            if (cust.customerID == customerID) {
+                accounts.push_back(Account(accNo, &cust));
+                cout << "Account opened successfully!\n";
+                return;
+            }
+        }
+        cout << "Customer ID not found.\n";
+    }
+
+    Account* findAccount(int accNo) {
+        for (auto& acc : accounts) {
+            if (acc.accountNumber == accNo) {
+                return &acc;
+            }
+        }
+        return nullptr;
+    }
+
+    void deposit(int accNo, double amount) {
+        Account* acc = findAccount(accNo);
+        if (acc) {
+            acc->deposit(amount);
+            transactions.push_back(Transaction("Deposit", amount));
+        } else {
+            cout << "Account not found!\n";
+        }
+    }
+
+    void withdraw(int accNo, double amount) {
+        Account* acc = findAccount(accNo);
+        if (acc) {
+            acc->withdraw(amount);
+            transactions.push_back(Transaction("Withdrawal", amount));
+        } else {
+            cout << "Account not found!\n";
+        }
+    }
+
+    void viewAccountInfo(int accNo) {
+        Account* acc = findAccount(accNo);
+        if (acc) {
+            acc->displayAccountInfo();
+        } else {
+            cout << "Account not found!\n";
+        }
+    }
+};
+
+// Main function to demonstrate the system
+int main() {
+    BankingService bank;
+
+    bank.addCustomer("John Doe", 1);
+    bank.addCustomer("Jane Smith", 2);
+
+    bank.openAccount(1, 1001);
+    bank.openAccount(2, 1002);
+
+    bank.deposit(1001, 500.0);
+    bank.withdraw(1001, 200.0);
+    bank.viewAccountInfo(1001);
+
+    return 0;
+}
