@@ -1,0 +1,64 @@
+#include <iostream>
+#include <iomanip>
+#include <string>
+#include <vector>
+using namespace std;
+
+// Function to convert grade to grade points
+int gradeToPoints(string grade) {
+    if (grade == "A+" || grade == "a+") return 10;
+    else if (grade == "A" || grade == "a") return 9;
+    else if (grade == "B+" || grade == "b+") return 8;
+    else if (grade == "B" || grade == "b") return 7;
+    else if (grade == "C+" || grade == "c+") return 6;
+    else if (grade == "C" || grade == "c") return 5;
+    else if (grade == "D" || grade == "d") return 4;
+    else if (grade == "F" || grade == "f") return 0;
+    else return 0;
+}
+
+int main() {
+    int numCourses;
+    double totalCredits = 0, totalGradePoints = 0;
+
+    cout << "Enter the number of courses: ";
+    cin >> numCourses;
+
+    vector<string> courseNames(numCourses);
+    vector<double> courseCredits(numCourses);
+    vector<string> courseGrades(numCourses);
+
+    for (int i = 0; i < numCourses; ++i) {
+        cout << "\nEnter details for Course " << i + 1 << ":\n";
+        cout << "Course name: ";
+        cin.ignore();
+        getline(cin, courseNames[i]);
+
+        cout << "Credit hours: ";
+        cin >> courseCredits[i];
+
+        cout << "Grade received (A+, A, B+, B, C+, C, D, F): ";
+        cin >> courseGrades[i];
+
+        int gradePoint = gradeToPoints(courseGrades[i]);
+        totalCredits += courseCredits[i];
+        totalGradePoints += gradePoint * courseCredits[i];
+    }
+
+    double cgpa = totalGradePoints / totalCredits;
+
+    cout << "\n\n--- Course Details ---\n";
+    cout << left << setw(20) << "Course" << setw(10) << "Credits" << setw(10) << "Grade" << endl;
+    for (int i = 0; i < numCourses; ++i) {
+        cout << left << setw(20) << courseNames[i] 
+             << setw(10) << courseCredits[i] 
+             << setw(10) << courseGrades[i] << endl;
+    }
+
+    cout << fixed << setprecision(2);
+    cout << "\nTotal Credits: " << totalCredits << endl;
+    cout << "Total Grade Points: " << totalGradePoints << endl;
+    cout << "CGPA: " << cgpa << endl;
+
+    return 0;
+}
